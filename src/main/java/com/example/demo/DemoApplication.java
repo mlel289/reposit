@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.ApplicationContext;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 
@@ -22,17 +24,26 @@ public class DemoApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 
-		/*
-		String[] beans = appContext.getBeanDefinitionNames();
-		Arrays.sort(beans);
-		for (String bean : beans) {
-			System.out.println(bean);
-		}
-		*/
+
 		ClassA classA = appContext.getBean(ClassA.class);
 
 		System.out.println(classA.getGreetings());
 
+
+		callExternalService();
+
+
+	}
+
+	private void callExternalService() {
+
+		RestTemplate restTemplate = new RestTemplate();
+		String uri = "http://localhost:8080/product";
+		Product product = new Product();
+		product.setName("name1");
+		Product response = restTemplate.postForObject(uri,product, Product.class);
+		System.out.println(response.id);
+		System.out.println(response.getName());
 	}
 
 }
